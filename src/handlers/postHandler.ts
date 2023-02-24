@@ -8,7 +8,7 @@ const postHandler = async (URL:string, formData:object, protect:boolean) => {
         Authorization: '',
     };
   if (protect) headers.Authorization = `Bearer ${Cookies.get("token")}`;
-  const response:res = {
+  const response:any = {
     status: 0,
     data:{},
   };

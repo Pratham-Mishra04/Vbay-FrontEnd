@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import res from '@/types/res';
 
 const getHandler = async (URL: string, protect: boolean) => {
     const headers = {
@@ -7,7 +8,7 @@ const getHandler = async (URL: string, protect: boolean) => {
         Authorization: '',
     };
     if (protect) headers.Authorization = `Bearer ${Cookies.get('token')}`;
-    const response = {
+    const response:any = {
         status: 0,
         data: '',
     };

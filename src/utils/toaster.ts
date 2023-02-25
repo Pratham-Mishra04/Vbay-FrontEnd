@@ -1,4 +1,4 @@
-import { toast, ToastOptions, UpdateOptions, Id } from 'react-toastify';
+import { toast, Id, ToastOptions, UpdateOptions } from 'react-toastify';
 
 class Toaster {
     static toastSettings: ToastOptions = {
@@ -26,7 +26,7 @@ class Toaster {
     static stopLoad(loader: Id, message: string, res: number): void {
         const settings: UpdateOptions = { ...this.toastSettings };
         settings.render = message;
-        settings.type = res == 1 ? 'success' : 'error';
+        settings.type = res === 1 ? 'success' : 'error';
         settings.isLoading = false;
         toast.update(loader, settings);
     }

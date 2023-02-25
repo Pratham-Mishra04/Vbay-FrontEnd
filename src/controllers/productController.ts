@@ -1,7 +1,7 @@
-import getHandler from '../handlers/getHandler.js';
-import postHandler from '../handlers/postHandler.js';
-import Toaster from '../utils/toaster.js';
-import envHandler from '../managers/envHandler.js';
+import getHandler from '@/handlers/getHandler.js';
+import postHandler from '@/handlers/postHandler.js';
+import Toaster from '@/utils/toaster.js';
+import envHandler from '@/managers/envHandler.js';
 
 const URL = `${envHandler('BACKEND_URL')}/products`;
 

@@ -2,9 +2,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import res from "@/types/res";
 
-const postHandler = async (URL:string, formData:object, protect:boolean) => {
+const postHandler = async (URL:string, formData:object, protect:boolean, type:string='application/json') => {
     const headers = {
-        'Content-Type': 'application/json',
+        'Content-Type': type,
         Authorization: '',
     };
   if (protect) headers.Authorization = `Bearer ${Cookies.get("token")}`;

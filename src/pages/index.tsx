@@ -12,7 +12,7 @@ export default function Home({ products }) {
         : Cookies.get('guestToken')
         ? Cookies.get('guestToken')
         : '';
-    // if (token === '') return <Landing />;
+    if (token === '') return <Landing />;
     if (!products) {
         Toaster.error('Error Loading the Products');
         return <Error />;
@@ -20,16 +20,22 @@ export default function Home({ products }) {
 
     return (
         <>
-            <div>
-                <div className='text-5xl flex justify-center items-center p-8 font-semibold'>
+            <div className="p-4">
+                <div className="text-5xl flex justify-center items-center p-8 font-semibold">
                     Products In Store
                 </div>
-                <div className='flex w-full gap-8 p-10 justify-center items-center flex-wrap'>
-                    {
-                        products.map((el)=>{
-                            return <ProductCard id={el._id} title={el.title} description={el.description} img={el.images[0]?el.images[0]:''} key={el._id}/>
-                        })
-                    }
+                <div className="flex w-full gap-8 p-10 justify-center items-center flex-wrap">
+                    {products.map((el) => {
+                        return (
+                            <ProductCard
+                                id={el._id}
+                                title={el.title}
+                                description={el.description}
+                                img={el.images[0] ? el.images[0] : ''}
+                                key={el._id}
+                            />
+                        );
+                    })}
                 </div>
             </div>
         </>

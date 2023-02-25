@@ -1,36 +1,39 @@
-import getHandler from '@/handlers/getHandler.js';
-import postHandler from '@/handlers/postHandler.js';
-import Toaster from '@/utils/toaster.js';
-import envHandler from '@/managers/envHandler.js';
+import postHandler from '@/handlers/postHandler';
+import Toaster from '@/utils/toaster';
+import envHandler from '@/managers/envHandler';
+import { DEV_BACKEND_URL } from '@/../constants';
+import patchHandler from '@/handlers/patchHandler';
 
-const URL = `${envHandler('BACKEND_URL')}/products`;
+// const URL = `${envHandler('BACKEND_URL')}/products`;
 
-export const getAllItems = async () => {
-    const loader = Toaster.startLoad('Loading your Products..');
-    const res = await getHandler(`${URL}/`, false);
-
-    if (res.status === 1) {
-        Toaster.stopLoad(loader, 'Products loaded', 1);
-        return res.data.products;
-    } else Toaster.stopLoad(loader, res.data.message, 0);
-};
-
-export const getItem = (id: string) => async () => {
-    const loader = Toaster.startLoad('Loading your Product..');
-    const res = await getHandler(`${URL}/${id}`, false);
-
-    if (res.status === 1) {
-        Toaster.stopLoad(loader, 'Loaded', 1);
-        return res.data.product;
-    } else Toaster.stopLoad(loader, res.data.message, 0);
-};
+const URL = `${DEV_BACKEND_URL}/products`;
 
 export const addItem = async (formData: object) => {
-    const loader = Toaster.startLoad('Adding your Product..');
-    const res = await postHandler(`${URL}/`, formData, true);
+    const toaster = Toaster.startLoad('Adding you Product');
+    try {
+        const res = await postHandler(`${URL}/`, formData, true, 'multipart/form-data');
+        if (res.status === 1) {
+            Toaster.stopLoad(toaster, 'Product Added', 1);
+            return 1;
+        } else Toaster.stopLoad(toaster, res.data.message, 0);
+        return 0;
+    } catch (err) {
+        Toaster.stopLoad(toaster, 'Internal Server Error', 0); //Make Separate Error Handler for this
+        return 0;
+    }
+};
 
-    if (res.status === 1) {
-        Toaster.stopLoad(loader, 'Product added', 1);
-        return res.data.products;
-    } else Toaster.stopLoad(loader, res.data.message, 0);
+export const editItem = async (formData: object, id:string) => {
+    const toaster = Toaster.startLoad('Editing you Product');
+    try {
+        const res = await patchHandler(`${URL}/${id}`, formData, true, 'multipart/form-data');
+        if (res.status === 1) {
+            Toaster.stopLoad(toaster, 'Product Edited', 1);
+            return 1;
+        } else Toaster.stopLoad(toaster, res.data.message, 0);
+        return 0;
+    } catch (err) {
+        Toaster.stopLoad(toaster, 'Internal Server Error', 0); //Make Separate Error Handler for this
+        return 0;
+    }
 };

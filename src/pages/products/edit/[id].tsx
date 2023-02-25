@@ -1,35 +1,54 @@
-import Image from 'next/image';
+import axios from 'axios';
+import { DEV_BACKEND_URL } from '@/../constants';
 import React from 'react';
+import Image from 'next/image';
 import { useState } from 'react';
-import { addItem } from '@/controllers/productController';
+import { editItem } from '@/controllers/productController';
 import { useRouter } from 'next/router';
 
-const NewProduct = () => {
+export interface Product {
+    product: {
+        _id:string,
+        title: string;
+        leastAsked: number;
+        description: string;
+        images: string[];
+        category: string;
+        age: number;
+        mrp: number;
+    };
+}
 
-    const router = useRouter()
+const Product = ({ product }: Product) => {
+    const { _id, images, title, category, leastAsked, description, mrp, age } =
+        product;
 
-    const [title, setTitle] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-    const [leastAsked, setLeastAsked] = useState<string>('');
-    const [category, setCategory] = useState<string>('');
-    const [age, setAge] = useState<string>('');
-    const [mrp, setMrp] = useState<string>('');
+    const router = useRouter();
+
+    const [titleNew, setTitleNew] = useState<string>(title);
+    const [descriptionNew, setDescriptionNew] = useState<string>(description);
+    const [leastAskedNew, setLeastAskedNew] = useState<string>(String(leastAsked));
+    const [categoryNew, setCategoryNew] = useState<string>(category);
+    const [ageNew, setAgeNew] = useState<string>(String(age));
+    const [mrpNew, setMrpNew] = useState<string>(String(mrp));
     const [selectedImage, setSelectedImage] = useState<string>('');
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
     const submitHandler = async () => {
         const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('leastAsked', leastAsked);
-        formData.append('category', category);
-        formData.append('age', age);
-        formData.append('mrp', mrp);
-        selectedFiles.forEach((file) => {
-            formData.append('images', file);
-        });
-    
-        if(await addItem(formData)===1) router.push('/')
+        if (titleNew !== title) formData.append('title', titleNew);
+        if (descriptionNew !== description)
+            formData.append('description', descriptionNew);
+        if (leastAskedNew !== String(leastAsked)) formData.append('leastAsked', leastAskedNew);
+        if (categoryNew !== category) formData.append('category', categoryNew);
+        if (ageNew !== String(age)) formData.append('age', ageNew);
+        if (mrpNew !== String(mrp)) formData.append('mrp', mrpNew);
+        if (selectedFiles.length > 0)
+            selectedFiles.forEach((file) => {
+                formData.append('images', file);
+            });
+
+        if ((await editItem(formData, _id)) === 1) router.push('/');
     };
 
     return (
@@ -37,46 +56,48 @@ const NewProduct = () => {
             <div className="w-full h-screen p-4 bg-gray-100 flex justify-center items-center overflow-y-hidden">
                 <main className="w-full md:w-5/6 xl:w-4/6 h-9/10 flex items-center bg-gray-100 rounded-lg font-mono">
                     <div className="w-full sm:w-1/2 md:w-1/3 p-10 grid grid-cols-1 space-y-4">
-                        <span className="font-bold text-2xl">Add Product</span>
+                        <span className="font-bold text-2xl">Edit Product</span>
                         <div className="space-y-2">
                             <input
                                 className="w-full rounded-md h-10  p-4"
                                 type="text"
-                                placeholder="title"
-                                onChange={(el) => setTitle(el.target.value)}
+                                value={titleNew}
+                                onChange={(el) => setTitleNew(el.target.value)}
                             />
                             <textarea
                                 className="w-full rounded-md min-h-[8rem] p-4"
-                                placeholder="description"
+                                value={descriptionNew}
                                 onChange={(el) =>
-                                    setDescription(el.target.value)
+                                    setDescriptionNew(el.target.value)
                                 }
                             />
                             <input
                                 className="w-full rounded-md h-10  p-4"
                                 type="text"
-                                placeholder="Category"
-                                onChange={(el) => setCategory(el.target.value)}
-                            />
-                            <input
-                                className="w-full rounded-md h-10  p-4"
-                                type="text"
-                                placeholder="age"
-                                onChange={(el) => setAge(el.target.value)}
-                            />
-                            <input
-                                className="w-full rounded-md h-10  p-4"
-                                type="text"
-                                placeholder="Least Asked"
+                                value={categoryNew}
                                 onChange={(el) =>
-                                    setLeastAsked(el.target.value)
+                                    setCategoryNew(el.target.value)
                                 }
                             />
                             <input
                                 className="w-full rounded-md h-10  p-4"
                                 type="text"
-                                placeholder="MRP"
-                                onChange={(el) => setMrp(el.target.value)}
+                                value={ageNew}
+                                onChange={(el) => setAgeNew(el.target.value)}
+                            />
+                            <input
+                                className="w-full rounded-md h-10  p-4"
+                                type="text"
+                                value={leastAskedNew}
+                                onChange={(el) =>
+                                    setLeastAskedNew(el.target.value)
+                                }
+                            />
+                            <input
+                                className="w-full rounded-md h-10  p-4"
+                                type="text"
+                                value={mrpNew}
+                                onChange={(el) => setMrpNew(el.target.value)}
                             />
                             <label>
                                 <input
@@ -113,7 +134,22 @@ const NewProduct = () => {
                                             )}
                                         </>
                                     ) : (
-                                        <span>Select Image</span>
+                                        <>
+                                            <Image
+                                                width={1000}
+                                                height={1000}
+                                                className="w-40"
+                                                src={`${DEV_BACKEND_URL}/${images[0]}`}
+                                                alt=""
+                                            />
+                                            {images.length > 1 ? (
+                                                <div className="w-10 h-10 rounded-full bg-slate-200 flex justify-center items-center">
+                                                    +{images.length - 1}
+                                                </div>
+                                            ) : (
+                                                ''
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             </label>
@@ -121,14 +157,14 @@ const NewProduct = () => {
                                 onClick={submitHandler}
                                 className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                             >
-                                Create
+                                Edit
                             </button>
                         </div>
                     </div>
                     <div className="hidden sm:inline sm:w-1/2 md:w-2/3 p-10 md:p-20">
                         <svg
                             id="f795efda-d52b-464f-8ed0-c83c27181fc6"
-                            data-title="Layer 1"
+                            data-titleNew="Layer 1"
                             xmlns="http://www.w3.org/2000/svg"
                             xmlnsXlink="http://www.w3.org/1999/xlink"
                             width="754"
@@ -382,4 +418,21 @@ const NewProduct = () => {
     );
 };
 
-export default NewProduct;
+export async function getServerSideProps(context) {
+    const { id } = context.query;
+    const URL = `${DEV_BACKEND_URL}/products/${id}`;
+    try {
+        const res = await axios.get(URL);
+        const product = res.data.data;
+        return {
+            props: { product },
+        };
+    } catch (err) {
+        //log the error
+        return {
+            props: {},
+        };
+    }
+}
+
+export default Product;

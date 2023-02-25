@@ -38,12 +38,14 @@ export const login = async (formData: object): Promise<0 | 1> => {
         const res = await postHandler(`${URL}/login`, formData, false);
         if (res.status === 1) {
             Toaster.stopLoad(toaster, 'Logged In!', 1);
-            // Cookies.set('token', res.data.token, {
-            //     expires: Number(envHandler('TOKEN_TIME')),
-            // });
-            // Cookies.set('id', res.data.user.user._id, {
-            //     expires: Number(envHandler('TOKEN_TIME')),
-            // });
+            Cookies.set('token', res.data.token, {
+                // expires: Number(envHandler('TOKEN_TIME')),
+                expires: 90,
+            });
+            Cookies.set('id', res.data.user._id, {
+                // expires: Number(envHandler('TOKEN_TIME')),
+                expires: 90,
+            });
             return 1;
         } else Toaster.stopLoad(toaster, res.data.message, 0);
         return 0;

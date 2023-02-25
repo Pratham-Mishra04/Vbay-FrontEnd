@@ -2,8 +2,6 @@ import React from 'react';
 import { useState } from 'react';
 import { login } from '@/controllers/authController';
 import { useRouter } from 'next/router';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 
 const Login = () => {
@@ -21,7 +19,6 @@ const Login = () => {
 
     return (
         <>
-            <ToastContainer />
             <div className="w-full h-screen p-4 bg-gray-100 flex justify-center items-center">
                 <main className="w-full md:w-5/6 xl:w-4/6 h-9/10 flex items-center bg-gray-100 rounded-lg font-mono">
                     <div className="w-full sm:w-1/2 md:w-1/3 p-10 grid grid-cols-1 space-y-4">

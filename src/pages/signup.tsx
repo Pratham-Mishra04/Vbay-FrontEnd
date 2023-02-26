@@ -24,7 +24,7 @@ const SignUp = () => {
             password,
             confirmPassword,
         };
-        if ((await signup(formdata)) === 1) router.push('/home');
+        if ((await signup(formdata)) === 1) router.push('/');
     };
     
     return(

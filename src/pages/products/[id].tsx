@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GetServerSidePropsContext } from 'next';
 import { DEV_BACKEND_URL } from '@/../constants';
 import React from 'react';
 import Image from 'next/image';
@@ -48,14 +49,13 @@ const Product = ({ product }: Product) => {
         });
     }, [bids]);
 
-    const bidHandler = async (contol:number) => {
-        if(contol===1){
+    const bidHandler = async (contol: number) => {
+        if (contol === 1) {
             const formData = {
                 bid,
             };
             await placeBid(formData, _id);
-        }
-        else await deleteBid(_id)
+        } else await deleteBid(_id);
     };
 
     return (
@@ -157,13 +157,17 @@ const Product = ({ product }: Product) => {
                                                 }}
                                             />
                                             <button
-                                                onClick={()=>{bidHandler(1)}}
+                                                onClick={() => {
+                                                    bidHandler(1);
+                                                }}
                                                 className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                                             >
                                                 Edit Your Bid
                                             </button>
                                             <button
-                                                onClick={()=>{bidHandler(0)}}
+                                                onClick={() => {
+                                                    bidHandler(0);
+                                                }}
                                                 className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                                             >
                                                 Delete Your Bid
@@ -183,7 +187,9 @@ const Product = ({ product }: Product) => {
                                         }}
                                     />
                                     <button
-                                        onClick={()=>{bidHandler(1)}}
+                                        onClick={() => {
+                                            bidHandler(1);
+                                        }}
                                         className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                                     >
                                         Place Your Bid
@@ -192,7 +198,33 @@ const Product = ({ product }: Product) => {
                             )}
                         </>
                     ) : (
-                        ''
+                        <>
+                            <div className="flex my-8">
+                                <div className="text-4xl font-semibold underline">
+                                    Bids
+                                </div>
+                                <div></div>
+                            </div>
+                            {bids.length > 0 ? (
+                                <>
+                                    <div>List of Bids</div>
+                                    <div>
+                                        {bids.map((el: Bid, index: number) => {
+                                            return (
+                                                <div key={index}>
+                                                    {el.bid} by{' '}
+                                                    {el.placedBy.username}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div>No Bids Yet</div>
+                                </>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -200,7 +232,7 @@ const Product = ({ product }: Product) => {
     );
 };
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
     const { id } = context.query;
     const URL = `${DEV_BACKEND_URL}/products/${id}`;
     try {

@@ -46,7 +46,7 @@ const NewProduct = () => {
                                 onChange={(el) => setTitle(el.target.value)}
                             />
                             <textarea
-                                className="w-full rounded-md min-h-[8rem] p-4"
+                                className="w-full rounded-md h-32 min-h-[8rem] max-h-56 p-4"
                                 placeholder="description"
                                 onChange={(el) =>
                                     setDescription(el.target.value)

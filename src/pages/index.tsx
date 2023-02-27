@@ -5,27 +5,46 @@ import { DEV_BACKEND_URL } from '@/../constants';
 import Toaster from '@/utils/toaster';
 import Error from '@/screens/Error';
 import ProductCard from '@/components/productCard';
+import { ProductState } from '@/slices/productSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { productsSelector, setProducts } from '@/slices/productsSlice';
+import { useEffect } from 'react';
+import SearchBox from '@/components/searchBox';
 
-export default function Home({ products }) {
+interface queryParams {
+    products: ProductState[];
+}
+
+export default function Home({ products }: queryParams) {
     const token = Cookies.get('token')
         ? Cookies.get('token')
         : Cookies.get('guestToken')
         ? Cookies.get('guestToken')
         : '';
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(setProducts(products));
+    }, []);
+
+    const allProducts = useSelector(productsSelector);
+
     if (token === '') return <Landing />;
-    if (!products) {
+    if (!allProducts) {
         Toaster.error('Error Loading the Products');
         return <Error />;
     }
 
     return (
         <>
+            <SearchBox />
             <div className="p-4">
                 <div className="text-5xl flex justify-center items-center p-8 font-semibold">
                     Products In Store
                 </div>
                 <div className="flex w-full gap-8 p-10 justify-center items-center flex-wrap">
-                    {products.map((el) => {
+                    {allProducts.map((el) => {
                         return (
                             <ProductCard
                                 id={el._id}

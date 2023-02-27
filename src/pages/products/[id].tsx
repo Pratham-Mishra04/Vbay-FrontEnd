@@ -7,6 +7,8 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import { deleteBid, placeBid } from '@/controllers/productController';
+import { useDispatch, useSelector } from 'react-redux';
+import { productSelector, setBids, setProduct } from '@/slices/productSlice';
 export interface Product {
     product: {
         _id: string;
@@ -32,15 +34,21 @@ interface listedBy {
 }
 
 const Product = ({ product }: Product) => {
-    const [bid, setBid] = useState(0);
+    const [bid, setBid] = useState<number>(0);
+    const [bids, setbids] = useState<Bid[]>(useSelector(productSelector).bids);
     const [isPlaced, setIsPlaced] = useState(false);
 
-    const { _id, images, title, listedBy, leastAsked, description, bids } =
-        product;
+    const dispatch = useDispatch();
+
+    dispatch(setProduct(product));
+
+    const { _id, images, title, listedBy, leastAsked, description } =
+        useSelector(productSelector);
 
     const userID = Cookies.get('id');
 
     useEffect(() => {
+        dispatch(setBids(bids))
         bids.forEach((el) => {
             if (el.placedBy.id === userID) {
                 setIsPlaced(true);
@@ -49,13 +57,17 @@ const Product = ({ product }: Product) => {
         });
     }, [bids]);
 
-    const bidHandler = async (contol: number) => {
-        if (contol === 1) {
-            const formData = {
-                bid,
-            };
-            await placeBid(formData, _id);
-        } else await deleteBid(_id);
+    const BidHandler = async (contol: number) => {
+        const bids:Bid[] =
+            contol === 1
+                ? await placeBid(
+                    {
+                        bid,
+                    },
+                    _id
+                )
+                : await deleteBid(_id);
+                setbids(bids)
     };
 
     return (
@@ -158,7 +170,7 @@ const Product = ({ product }: Product) => {
                                             />
                                             <button
                                                 onClick={() => {
-                                                    bidHandler(1);
+                                                    BidHandler(1);
                                                 }}
                                                 className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                                             >
@@ -166,7 +178,7 @@ const Product = ({ product }: Product) => {
                                             </button>
                                             <button
                                                 onClick={() => {
-                                                    bidHandler(0);
+                                                    BidHandler(0);
                                                 }}
                                                 className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                                             >
@@ -174,7 +186,23 @@ const Product = ({ product }: Product) => {
                                             </button>
                                         </>
                                     ) : (
-                                        ''
+                                        <>
+                                        <input
+                                            type="number"
+                                            placeholder="Place your Bid"
+                                            onChange={(el) => {
+                                                setBid(Number(el.target.value));
+                                            }}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                BidHandler(1);
+                                            }}
+                                            className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
+                                        >
+                                            Place Your Bid
+                                        </button>
+                                    </>
                                     )}
                                 </>
                             ) : (
@@ -188,7 +216,7 @@ const Product = ({ product }: Product) => {
                                     />
                                     <button
                                         onClick={() => {
-                                            bidHandler(1);
+                                            BidHandler(1);
                                         }}
                                         className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
                                     >

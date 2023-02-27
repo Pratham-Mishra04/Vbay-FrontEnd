@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GetServerSidePropsContext } from 'next';
 import { DEV_BACKEND_URL } from '@/../constants';
 import React from 'react';
 import Image from 'next/image';
@@ -418,7 +419,7 @@ const Product = ({ product }: Product) => {
     );
 };
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context:GetServerSidePropsContext) {
     const { id } = context.query;
     const URL = `${DEV_BACKEND_URL}/products/${id}`;
     try {

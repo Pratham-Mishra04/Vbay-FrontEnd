@@ -45,9 +45,8 @@ export const placeBid = async (formData: object, id:string) => {
         const res = await postHandler(`${DEV_BACKEND_URL}/shop/${id}/bid`, formData, true);
         if (res.status === 1) {
             Toaster.stopLoad(toaster, 'Bid Placed', 1);
-            return 1;
         } else Toaster.stopLoad(toaster, res.data.message, 0);
-        return 0;
+        return res.data.bids;
     } catch (err) {
         Toaster.stopLoad(toaster, 'Internal Server Error', 0); //Make Separate Error Handler for this
         return 0;
@@ -60,9 +59,8 @@ export const deleteBid = async (id:string) => {
         const res = await deleteHandler(`${DEV_BACKEND_URL}/shop/${id}/bid`);
         if (res.status === 1) {
             Toaster.stopLoad(toaster, 'Bid Deleted', 1);
-            return 1;
         } else Toaster.stopLoad(toaster, res.data.message, 0);
-        return 0;
+        return res.data.bids;
     } catch (err) {
         Toaster.stopLoad(toaster, 'Internal Server Error', 0); //Make Separate Error Handler for this
         return 0;

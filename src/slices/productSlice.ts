@@ -50,11 +50,14 @@ export const productSlice = createSlice({
             state.images = action.payload.images;
             state.bids = action.payload.bids;
         },
+        setBids: (state, action: PayloadAction<Bid[]>) => {
+            state.bids= action.payload
+        },
     },
 });
 
-export const { setProduct } = productSlice.actions;
+export const { setProduct, setBids } = productSlice.actions;
 
 export default productSlice.reducer;
 
-export const prductSelector = (state: RootState) => state.product;
+export const productSelector = (state: RootState) => state.product;

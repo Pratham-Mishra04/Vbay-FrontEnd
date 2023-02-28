@@ -9,7 +9,12 @@ import { DEV_BACKEND_URL } from '@/../constants';
 
 const URL = `${DEV_BACKEND_URL}/users`;
 
-export const signup = async (formData: object): Promise<0 | 1> => {
+interface Response {
+    status: number;
+    data: object;
+}
+
+export const signup = async (formData: object): Promise<Response> => {
     const loader = Toaster.startLoad('Creating your Account..');
     try {
         const res = await postHandler(`${URL}/signup`, formData, false);
@@ -23,17 +28,26 @@ export const signup = async (formData: object): Promise<0 | 1> => {
                 // expires: Number(envHandler('TOKEN_TIME')),
                 expires: 90,
             });
-            return 1;
+            return {
+                status: 1,
+                data: res.data.user,
+            };
         } else Toaster.stopLoad(loader, res.data.message, 0);
-        return 0;
+        return {
+            status: 0,
+            data: {},
+        };
     } catch (err) {
         console.log(err);
         Toaster.stopLoad(loader, 'Internal Server Error', 0); //Make Separate Error Handler for this
-        return 0;
+        return {
+            status: 0,
+            data: {},
+        };
     }
 };
 
-export const login = async (formData: object): Promise<0 | 1> => {
+export const login = async (formData: object): Promise<Response> => {
     const toaster = Toaster.startLoad('Logging In');
     try {
         const res = await postHandler(`${URL}/login`, formData, false);
@@ -47,11 +61,21 @@ export const login = async (formData: object): Promise<0 | 1> => {
                 // expires: Number(envHandler('TOKEN_TIME')),
                 expires: 90,
             });
-            return 1;
+            return {
+                status: 1,
+                data: res.data.user,
+            };
         } else Toaster.stopLoad(toaster, res.data.message, 0);
-        return 0;
+        return {
+            status: 0,
+            data: {},
+        };
     } catch (err) {
+        console.log(err);
         Toaster.stopLoad(toaster, 'Internal Server Error', 0); //Make Separate Error Handler for this
-        return 0;
+        return {
+            status: 0,
+            data: {},
+        };
     }
 };

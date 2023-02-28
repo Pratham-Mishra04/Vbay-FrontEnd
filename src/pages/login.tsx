@@ -3,18 +3,27 @@ import { useState } from 'react';
 import { login } from '@/controllers/authController';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/slices/userSlice';
 
 const Login = () => {
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const [loggedInUser, SetLoggedInUser] = useState('')
+    const dispatch = useDispatch()
+
     const submitHandler = async () => {
         const formdata = {
             username,
             password,
         };
-        if ((await login(formdata)) === 1) router.push('/');
+        const res= await login(formdata)
+        if ( res.status === 1){
+            dispatch(setUser(res.data))
+            router.push('/');
+        } 
     };
 
     return (

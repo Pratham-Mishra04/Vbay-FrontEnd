@@ -7,7 +7,7 @@ import Error from '@/screens/Error';
 import ProductCard from '@/components/productCard';
 import { ProductState } from '@/slices/productSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { productsSelector, setProducts } from '@/slices/productsSlice';
+import { allProductsSelector, setAllProducts } from '@/slices/productSlice';
 import { useEffect } from 'react';
 import SearchBox from '@/components/searchBox';
 
@@ -25,10 +25,10 @@ export default function Home({ products }: queryParams) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(setProducts(products));
+        dispatch(setAllProducts(products));
     }, []);
 
-    const allProducts = useSelector(productsSelector);
+    const allProducts = useSelector(allProductsSelector);
 
     if (token === '') return <Landing />;
     if (!allProducts) {

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { deleteBid, placeBid } from '@/controllers/productController';
 import { useDispatch, useSelector } from 'react-redux';
 import { productSelector, setBids, setProduct } from '@/slices/productSlice';
+import Toaster from '@/utils/toaster';
 export interface Product {
     product: {
         _id: string;
@@ -48,7 +49,7 @@ const Product = ({ product }: Product) => {
     const userID = Cookies.get('id');
 
     useEffect(() => {
-        dispatch(setBids(bids))
+        dispatch(setBids(bids));
         bids.forEach((el) => {
             if (el.placedBy.id === userID) {
                 setIsPlaced(true);
@@ -58,16 +59,20 @@ const Product = ({ product }: Product) => {
     }, [bids]);
 
     const BidHandler = async (contol: number) => {
-        const bids:Bid[] =
-            contol === 1
-                ? await placeBid(
-                    {
-                        bid,
-                    },
-                    _id
-                )
-                : await deleteBid(_id);
-                setbids(bids)
+        if (bid <= product.leastAsked)
+            Toaster.error('Bid should be greater than the least asked');
+        else {
+            const bids: Bid[] =
+                contol === 1
+                    ? await placeBid(
+                        {
+                            bid,
+                        },
+                        _id
+                    )
+                    : await deleteBid(_id);
+            setbids(bids);
+        }
     };
 
     return (
@@ -187,22 +192,24 @@ const Product = ({ product }: Product) => {
                                         </>
                                     ) : (
                                         <>
-                                        <input
-                                            type="number"
-                                            placeholder="Place your Bid"
-                                            onChange={(el) => {
-                                                setBid(Number(el.target.value));
-                                            }}
-                                        />
-                                        <button
-                                            onClick={() => {
-                                                BidHandler(1);
-                                            }}
-                                            className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
-                                        >
-                                            Place Your Bid
-                                        </button>
-                                    </>
+                                            <input
+                                                type="number"
+                                                placeholder="Place your Bid"
+                                                onChange={(el) => {
+                                                    setBid(
+                                                        Number(el.target.value)
+                                                    );
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    BidHandler(1);
+                                                }}
+                                                className="w-full focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-purple-500 hover:bg-purple-600 hover:shadow-lg"
+                                            >
+                                                Place Your Bid
+                                            </button>
+                                        </>
                                     )}
                                 </>
                             ) : (

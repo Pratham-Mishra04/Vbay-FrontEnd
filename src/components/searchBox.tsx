@@ -3,26 +3,36 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DEV_BACKEND_URL } from '@./../constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { productsSelector } from '@/slices/productsSlice';
-import { setProducts } from '@/slices/productsSlice';
+import { allProductsSelector, setAllProducts } from '@/slices/productSlice';
+import Toaster from '@/utils/toaster';
 
 const SearchBox = () => {
     const [search, setSearch] = useState('');
-    const [newProducts, setNewProducts] = useState(useSelector(productsSelector))
+    const [newProducts, setNewProducts] = useState(
+        useSelector(allProductsSelector)
+    );
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(setProducts(newProducts))
-    }, [newProducts])
-    
+        dispatch(setAllProducts(newProducts));
+    }, [newProducts]);
 
     const SubmitHandler = async () => {
-        const URL = `${DEV_BACKEND_URL}/shop/guest?search=${search}`;
+        try {
+            const URL = `${DEV_BACKEND_URL}/shop/guest?search=${search}`;
             const res = await axios.get(URL);
             const products = res.data.products;
-            setNewProducts(products)
+            setNewProducts(products);
+        } catch (err) {
+            Toaster.error('Error Loading the Products');
+        }
     };
+
+    const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) =>{
+        if(event.key==='Enter') SubmitHandler()
+    }
+    
     return (
         <div className="flex justify-center">
             <div className="mb-3 xl:w-96">
@@ -36,6 +46,7 @@ const SearchBox = () => {
                         onChange={(el) => {
                             setSearch(el.target.value);
                         }}
+                        onKeyDown={onKeyDown}
                     />
                     <button
                         className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-neutral-700 dark:text-neutral-200"

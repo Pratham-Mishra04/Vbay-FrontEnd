@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { editItem } from '@/controllers/productController';
 import { useRouter } from 'next/router';
 import Protect from '@/utils/protect';
+import Toaster from '@/utils/toaster';
 
 export interface Product {
     product: {
@@ -22,7 +23,6 @@ export interface Product {
 }
 
 const Product = ({ product }: Product) => {
-    console.log(product)
     const { _id, images, title, category, leastAsked, description, mrp, age } =
         product;
 
@@ -110,11 +110,14 @@ const Product = ({ product }: Product) => {
                                     onChange={({ target }) => {
                                         if (target.files && target.files[0]) {
                                             const file = target.files[0];
-                                            setSelectedImage(
-                                                URL.createObjectURL(file)
-                                            );
-
-                                            setSelectedFiles([...target.files]);
+                                            if(file.type.split('/')[0]=='image'){
+                                                setSelectedImage(
+                                                    URL.createObjectURL(file)
+                                                );
+    
+                                                setSelectedFiles([...target.files]);
+                                            }
+                                            else Toaster.error("Only Image Files can be selected")
                                         }
                                     }}
                                 />

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { addItem } from '@/controllers/productController';
 import { useRouter } from 'next/router';
 import Protect from '@/utils/protect';
+import Toaster from '@/utils/toaster';
 
 const NewProduct = () => {
 
@@ -87,11 +88,14 @@ const NewProduct = () => {
                                     onChange={({ target }) => {
                                         if (target.files && target.files[0]) {
                                             const file = target.files[0];
-                                            setSelectedImage(
-                                                URL.createObjectURL(file)
-                                            );
-
-                                            setSelectedFiles([...target.files]);
+                                            if(file.type.split('/')[0]=='image'){
+                                                setSelectedImage(
+                                                    URL.createObjectURL(file)
+                                                );
+    
+                                                setSelectedFiles([...target.files]);
+                                            }
+                                            else Toaster.error("Only Image Files can be selected")
                                         }
                                     }}
                                 />

@@ -38,7 +38,6 @@ export const signup = async (formData: object): Promise<Response> => {
             data: {},
         };
     } catch (err) {
-        console.log(err);
         Toaster.stopLoad(loader, 'Internal Server Error', 0); //Make Separate Error Handler for this
         return {
             status: 0,
@@ -71,7 +70,6 @@ export const login = async (formData: object): Promise<Response> => {
             data: {},
         };
     } catch (err) {
-        console.log(err);
         Toaster.stopLoad(toaster, 'Internal Server Error', 0); //Make Separate Error Handler for this
         return {
             status: 0,

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { signup } from '@/controllers/authController';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/slices/userSlice';
 
 const SignUp = () => {
     const router = useRouter();
@@ -14,6 +16,8 @@ const SignUp = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    const dispatch = useDispatch()
+
     const submitHandler = async () => {
         const formdata = {
             email,
@@ -24,7 +28,11 @@ const SignUp = () => {
             password,
             confirmPassword,
         };
-        if ((await signup(formdata)) === 1) router.push('/');
+        const res= await signup(formdata)
+        if ( res.status === 1){
+            dispatch(setUser(res.data))
+            router.push('/');
+        } 
     };
     
     return(
@@ -91,9 +99,9 @@ const SignUp = () => {
                             stroke="currentColor"
                         >
                             <path
-                                stroke-linecap="round"
+                                strokeLinecap="round"
                                 stroke-linejoin="round"
-                                stroke-width="2"
+                                sstrokeWidth="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                             />
                         </svg>

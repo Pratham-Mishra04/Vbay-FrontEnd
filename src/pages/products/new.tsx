@@ -3,6 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import { addItem } from '@/controllers/productController';
 import { useRouter } from 'next/router';
+import Protect from '@/utils/protect';
 
 const NewProduct = () => {
 
@@ -382,4 +383,4 @@ const NewProduct = () => {
     );
 };
 
-export default NewProduct;
+export default Protect(NewProduct);

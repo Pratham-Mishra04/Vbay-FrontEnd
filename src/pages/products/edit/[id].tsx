@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { editItem } from '@/controllers/productController';
 import { useRouter } from 'next/router';
+import Protect from '@/utils/protect';
 
 export interface Product {
     product: {
@@ -21,6 +22,7 @@ export interface Product {
 }
 
 const Product = ({ product }: Product) => {
+    console.log(product)
     const { _id, images, title, category, leastAsked, description, mrp, age } =
         product;
 
@@ -49,7 +51,7 @@ const Product = ({ product }: Product) => {
                 formData.append('images', file);
             });
 
-        if ((await editItem(formData, _id)) === 1) router.push('/');
+        if ((await editItem(formData, _id)) === 1) router.push(`/products/${_id}`);
     };
 
     return (
@@ -66,7 +68,7 @@ const Product = ({ product }: Product) => {
                                 onChange={(el) => setTitleNew(el.target.value)}
                             />
                             <textarea
-                                className="w-full rounded-md min-h-[8rem] p-4"
+                                className="w-full rounded-md h-32 min-h-[8rem] max-h-56 p-4"
                                 value={descriptionNew}
                                 onChange={(el) =>
                                     setDescriptionNew(el.target.value)
@@ -165,7 +167,6 @@ const Product = ({ product }: Product) => {
                     <div className="hidden sm:inline sm:w-1/2 md:w-2/3 p-10 md:p-20">
                         <svg
                             id="f795efda-d52b-464f-8ed0-c83c27181fc6"
-                            data-titleNew="Layer 1"
                             xmlns="http://www.w3.org/2000/svg"
                             xmlnsXlink="http://www.w3.org/1999/xlink"
                             width="754"
@@ -424,7 +425,7 @@ export async function getServerSideProps(context:GetServerSidePropsContext) {
     const URL = `${DEV_BACKEND_URL}/products/${id}`;
     try {
         const res = await axios.get(URL);
-        const product = res.data.data;
+        const product = res.data.product;
         return {
             props: { product },
         };
@@ -436,4 +437,4 @@ export async function getServerSideProps(context:GetServerSidePropsContext) {
     }
 }
 
-export default Product;
+export default Protect(Product);
